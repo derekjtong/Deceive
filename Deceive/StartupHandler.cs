@@ -22,6 +22,7 @@ internal static class StartupHandler
     {
         AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
         Application.EnableVisualStyles();
+        Trace.Listeners.Add(new ConsoleTraceListener());
         try
         {
             await StartDeceiveAsync(args, gamePatchline, riotClientParams, gameParams);
@@ -122,6 +123,7 @@ internal static class StartupHandler
             LaunchGame.LoL => "league_of_legends",
             LaunchGame.LoR => "bacon",
             LaunchGame.VALORANT => "valorant",
+            LaunchGame.Lion => "lion",
             LaunchGame.RiotClient => null,
             var x => throw new Exception("Unexpected LaunchGame: " + x)
         };

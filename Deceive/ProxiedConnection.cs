@@ -43,7 +43,7 @@ internal class ProxiedConnection
         try
         {
             int byteCount;
-            var bytes = new byte[8192];
+            var bytes = new byte[8192 * 2];
 
             do
             {
@@ -91,7 +91,7 @@ internal class ProxiedConnection
         try
         {
             int byteCount;
-            var bytes = new byte[8192];
+            var bytes = new byte[8192 * 2];
 
             do
             {
@@ -181,6 +181,9 @@ internal class ProxiedConnection
 
                 // Remove Legends of Runeterra presence
                 presence.Element("games")?.Element("bacon")?.Remove();
+                
+                // Remove 2XKO presence
+                presence.Element("games")?.Element("lion")?.Remove();
 
                 // Extracts current VALORANT from the user's own presence, so that we can show a fake
                 // player with the proper version and avoid "Version Mismatch" from being shown.
