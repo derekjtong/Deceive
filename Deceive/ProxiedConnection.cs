@@ -198,7 +198,7 @@ internal class ProxiedConnection
                     {
                         var valorantPresence = Encoding.UTF8.GetString(Convert.FromBase64String(valorantBase64));
                         var valorantJson = JsonSerializer.Deserialize<JsonNode>(valorantPresence);
-                        ValorantVersion = valorantJson?["partyClientVersion"]?.GetValue<string>();
+                        ValorantVersion = valorantJson?["partyPresenceData"]?["partyClientVersion"]?.GetValue<string>();
                         Trace.WriteLine("Found VALORANT version: " + ValorantVersion);
                         // only resend
                         if (InsertedFakePlayer && ValorantVersion is not null)
