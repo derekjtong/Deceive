@@ -36,7 +36,7 @@ internal class MainController : ApplicationContext
     public string Status { get; set; } = null!;
     private string StatusFile { get; } = Path.Combine(Persistence.DataDir, "status");
     public bool ConnectToMuc { get; set; } = true;
-    private bool SentIntroductionText { get; set; } = false;
+    private bool SentIntroductionText { get; set; } = true;
     private CancellationTokenSource? ShutdownToken { get; set; } = null;
 
     private ToolStripMenuItem EnabledMenuItem { get; set; } = null!;
