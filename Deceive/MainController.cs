@@ -303,10 +303,13 @@ internal class MainController : ApplicationContext
 
     private void LoadStatus()
     {
+        Status = "offline";
         if (File.Exists(StatusFile))
-            Status = File.ReadAllText(StatusFile) == "mobile" ? "mobile" : "offline";
-        else
-            Status = "offline";
+        {
+            var saved = File.ReadAllText(StatusFile).Trim().ToLower();
+            if (saved is "mobile" or "offline" or "chat")
+                Status = saved;
+        }
     }
 
     private async Task ShutdownIfNoReconnect()
