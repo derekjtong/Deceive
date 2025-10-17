@@ -8,8 +8,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Linq;
 using Deceive.Properties;
 
 namespace Deceive;
@@ -118,7 +116,8 @@ internal class MainController : ApplicationContext
                         await SendIntroductionTextAsync();
                     });
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Trace.WriteLine("Failed to handle incoming connection.");
                 Trace.WriteLine(e);
@@ -275,9 +274,30 @@ internal class MainController : ApplicationContext
     private async Task SendIntroductionTextAsync()
     {
         SentIntroductionText = true;
-        await SendMessageFromFakePlayerAsync("Welcome! Deceive is running and you are currently appearing " + Status +
-                                             ". Despite what the game client may indicate, you are appearing offline to your friends unless you manually disable Deceive.");
+
+        // Send different intro message depending on loaded status
+        string introMessage = Status switch
+        {
+            "chat" => "Welcome! Deceive is running and you are currently appearing online to your friends.",
+            "mobile" => "Welcome! Deceive is running and you are currently appearing mobile to your friends.",
+            _ => "Welcome! Deceive is running and you are currently appearing offline to your friends."
+        };
+
+        await SendMessageFromFakePlayerAsync(introMessage);
         await Task.Delay(200);
+
+        if (Status == "offline")
+        {
+            await SendMessageFromFakePlayerAsync(
+                "Despite what the game client may indicate, you are appearing offline to your friends unless you manually disable Deceive.");
+            await Task.Delay(200);
+        }
+        else if (Status == "mobile")
+        {
+            await SendMessageFromFakePlayerAsync(
+                "You are appearing as if you are on a mobile device — this can be useful if you want to look online but away.");
+            await Task.Delay(200);
+        }
         await SendMessageFromFakePlayerAsync(
             "If you want to invite others while being offline, you may need to disable Deceive for them to accept. You can enable Deceive again as soon as they are in your lobby.");
         await Task.Delay(200);
@@ -305,10 +325,13 @@ internal class MainController : ApplicationContext
 
     private void LoadStatus()
     {
+        Status = "offline";
         if (File.Exists(StatusFile))
-            Status = File.ReadAllText(StatusFile) == "mobile" ? "mobile" : "offline";
-        else
-            Status = "offline";
+        {
+            var saved = File.ReadAllText(StatusFile).Trim().ToLower();
+            if (saved is "mobile" or "offline" or "chat")
+                Status = saved;
+        }
     }
 
     private async Task ShutdownIfNoReconnect()
