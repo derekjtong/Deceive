@@ -295,7 +295,7 @@ internal class MainController : ApplicationContext
         else if (Status == "mobile")
         {
             await SendMessageFromFakePlayerAsync(
-                "You are appearing as if you are on a mobile device — this can be useful if you want to look online but away.");
+                "You are appearing as if you are on a mobile device.");
             await Task.Delay(200);
         }
         await SendMessageFromFakePlayerAsync(
