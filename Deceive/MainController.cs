@@ -8,8 +8,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Linq;
 using Deceive.Properties;
 
 namespace Deceive;
@@ -118,7 +116,8 @@ internal class MainController : ApplicationContext
                         await SendIntroductionTextAsync();
                     });
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Trace.WriteLine("Failed to handle incoming connection.");
                 Trace.WriteLine(e);
@@ -275,15 +274,14 @@ internal class MainController : ApplicationContext
     private async Task SendIntroductionTextAsync()
     {
         SentIntroductionText = true;
-        await SendMessageFromFakePlayerAsync("Welcome! Deceive is running and you are currently appearing " + Status +
-                                             ". Despite what the game client may indicate, you are appearing offline to your friends unless you manually disable Deceive.");
-        await Task.Delay(200);
-        await SendMessageFromFakePlayerAsync(
-            "If you want to invite others while being offline, you may need to disable Deceive for them to accept. You can enable Deceive again as soon as they are in your lobby.");
-        await Task.Delay(200);
-        await SendMessageFromFakePlayerAsync("To enable or disable Deceive, or to configure other settings, find Deceive in your tray icons.");
-        await Task.Delay(200);
-        await SendMessageFromFakePlayerAsync("Have fun!");
+
+        string statusIntro = Status switch
+        {
+            "chat" => "You are currently appearing online to your friends.",
+            "mobile" => "You are currently appearing mobile to your friends.",
+            _ => "You are currently appearing offline* to your friends."
+        };
+        await SendMessageFromFakePlayerAsync(statusIntro);
     }
 
     private async Task SendMessageFromFakePlayerAsync(string message)
